@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.gluonhq.charm.glisten.control.CardPane?>
+<?import com.gluonhq.charm.glisten.control.Icon?>
+<?import com.gluonhq.charm.glisten.control.TextField?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Accordion?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Pagination?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.HBox?>
+
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="558.0" prefWidth="920.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1">
+   <center>
+      <TabPane BorderPane.alignment="CENTER">
+         <tabs>
+            <Tab closable="false" text="Khám phá">
+               <content>
+                  <SplitPane dividerPositions="0.4096989966555184" prefHeight="160.0" prefWidth="200.0">
+                    <items>
+                        <BorderPane>
+                           <center>
+                              <BorderPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+                                 <top>
+                                    <Accordion BorderPane.alignment="CENTER">
+                                      <panes>
+                                        <TitledPane animated="false" text="Thêm slang word">
+                                          <content>
+                                            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                                          </content>
+                                        </TitledPane>
+                                        <TitledPane animated="false" text="Thêm slang word">
+                                          <content>
+                                            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                                          </content>
+                                        </TitledPane>
+                                        <TitledPane animated="false" text="Thêm slang word">
+                                          <content>
+                                            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                                          </content>
+                                        </TitledPane>
+                                      </panes>
+                                    </Accordion>
+                                 </top>
+                              </BorderPane>
+                           </center>
+                        </BorderPane>
+                        <BorderPane>
+                           <center>
+                              <CardPane fx:id="cards" maxWidth="1.7976931348623157E308" prefHeight="204.0" prefWidth="420.0" BorderPane.alignment="CENTER">
+                                 <BorderPane>
+                                    <center>
+                                       <FlowPane hgap="8.0">
+                                          <children>
+                                             <Label text="Keyword" />
+                                             <Label layoutX="10.0" layoutY="10.0" opacity="0.46" text="Description" textOverrun="CLIP" wrapText="true" />
+                                          </children>
+                                          <padding>
+                                             <Insets bottom="14.0" left="14.0" right="14.0" top="14.0" />
+                                          </padding>
+                                       </FlowPane>
+                                    </center>
+                                    <right>
+                                       <BorderPane prefHeight="46.0" prefWidth="108.0" BorderPane.alignment="CENTER">
+                                          <center>
+                                             <HBox prefHeight="100.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+                                                <children>
+                                                   <Icon content="HELP_OUTLINE" />
+                                                   <Icon content="HELP_OUTLINE" layoutX="10.0" layoutY="10.0" />
+                                                </children>
+                                             </HBox>
+                                          </center>
+                                       </BorderPane>
+                                    </right>
+                                 </BorderPane>
+                                 <FlowPane hgap="8.0" layoutX="10.0" layoutY="10.0">
+                                    <children>
+                                       <Label text="Keyword" />
+                                       <Label layoutX="10.0" layoutY="10.0" opacity="0.46" text="Description" textOverrun="CLIP" wrapText="true" />
+                                    </children>
+                                    <padding>
+                                       <Insets bottom="14.0" left="14.0" right="14.0" top="14.0" />
+                                    </padding>
+                                 </FlowPane>
+                              </CardPane>
+                           </center>
+                           <top>
+                              <BorderPane style="-fx-background-color: white;" BorderPane.alignment="CENTER">
+                                 <center>
+                                    <TextField fx:id="searchInp">
+                                       <padding>
+                                          <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
+                                       </padding>
+                                    </TextField>
+                                 </center>
+                                 <left>
+                                    <Icon content="SEARCH" BorderPane.alignment="CENTER" />
+                                 </left>
+                                 <padding>
+                                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                 </padding>
+                                 <bottom>
+                                    <ChoiceBox prefWidth="150.0" BorderPane.alignment="TOP_LEFT">
+                                       <BorderPane.margin>
+                                          <Insets top="6.0" />
+                                       </BorderPane.margin>
+                                    </ChoiceBox>
+                                 </bottom>
+                              </BorderPane>
+                           </top>
+                           <bottom>
+                              <Pagination maxPageIndicatorCount="4" pageCount="5" prefHeight="55.0" prefWidth="420.0" BorderPane.alignment="CENTER" />
+                           </bottom>
+                        </BorderPane>
+                    </items>
+                  </SplitPane>
+               </content>
+            </Tab>
+            <Tab text="Lịch sử tìm kiếm ">
+               <content>
+                  <BorderPane prefHeight="200.0" prefWidth="200.0" />
+               </content>
+            </Tab>
+         </tabs>
+      </TabPane>
+   </center>
+</BorderPane>
