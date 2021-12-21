@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class TwoWaySlangHashMap {
+    //declare a type
     private HashMap<String, ArrayList<String>> forward;
     private HashMap<String, ArrayList<String>> backward;
 
@@ -24,12 +25,15 @@ public class TwoWaySlangHashMap {
         //for V is definition, split into words
         String[] words = value.toString().split(" ");
 
-        //for all words, remove special characters and put into forward
-        //this is for searching by definition
+        //Currently unused because of full text search
+//        //for all words, remove special characters and put into forward
+//        //this is for searching by definition
         for (String word : words) {
             String wordNoSpecial = word.replaceAll("[^a-zA-Z0-9]", "");
 
+            //Initialize the key on the first put
             backward.putIfAbsent(wordNoSpecial, new ArrayList<>());
+
             final var arr = backward.get(wordNoSpecial);
 
             arr.add(key);
@@ -45,22 +49,19 @@ public class TwoWaySlangHashMap {
 
         String[] words = value.toString().split(" ");
 
-        for (String word : words) {
-            String wordNoSpecial = word.replaceAll("[^a-zA-Z0-9]", "");
-
-            backward.put(wordNoSpecial, new ArrayList<>());
-            final var arr = backward.get(wordNoSpecial);
-
-            arr.add(key);
-        }
+        //currently unused because of full text search
+//        for (String word : words) {
+//            String wordNoSpecial = word.replaceAll("[^a-zA-Z0-9]", "");
+//
+//            backward.put(wordNoSpecial, new ArrayList<>());
+//            final var arr = backward.get(wordNoSpecial);
+//
+//            arr.add(key);
+//        }
     }
 
     public ArrayList<String> getDefinition(String slangWord) {
         return forward.get(slangWord);
-    }
-
-    public ArrayList<String> getSlang(String definitionKey) {
-        return backward.get(definitionKey);
     }
 
     public ArrayList<String> searchByDefinition(String definitionKey) {
@@ -71,10 +72,23 @@ public class TwoWaySlangHashMap {
             for (String value : array) {
                 if (value.contains(definitionKey)) {
                     arr.add(forward.keySet().toArray()[index].toString());
+                    break;
                 }
             }
 
             index++;
+        });
+
+        return arr;
+    }
+
+    public ArrayList<String> searchBySlang(String slangWord) {
+        var arr = new ArrayList<String>();
+
+        forward.keySet().forEach(key -> {
+            if (key.contains(slangWord)) {
+                arr.add(key);
+            }
         });
 
         return arr;
