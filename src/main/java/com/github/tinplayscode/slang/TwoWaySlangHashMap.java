@@ -1,63 +1,76 @@
 package com.github.tinplayscode.slang;
 
-import java.lang.reflect.AnnotatedArrayType;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
 public class TwoWaySlangHashMap {
-    //declare a type
-    private HashMap<String, ArrayList<String>> forward;
-    private HashMap<String, ArrayList<String>> backward;
+    //forward: slang -> definitions
+    //backward: each word in definitions -> slang (s)
+    private final HashMap<String, ArrayList<String>> forward;
+    private final HashMap<String, ArrayList<String>> backward;
 
     public TwoWaySlangHashMap() {
-        forward = new HashMap<>();
+        forward = new HashMap<String, ArrayList<String>>();
         backward = new HashMap<>();
     }
 
-    public void duplicatingPut(String key, String value) {
+    /**
+     * Duplicate put
+     * @param key key
+     * @param value value
+     */
+    public void put(String key, String value) {
+        put(key, value, true);
+    }
+
+    /**
+     * put a key value pair
+     * @param key key
+     * @param value value
+     * @param isDuplicate true if duplicate
+     */
+    public void put(String key, String value, boolean isDuplicate) {
         //Initialize the key on the first put
-        forward.putIfAbsent(key, new ArrayList<>());
-        final var array = forward.get(key);
+        forward.putIfAbsent(key, new ArrayList<String>());
 
-        // Add value to key
-        array.add(value);
+        //Add to array
+        if(isDuplicate) {
+            forward.get(key).add(value);
+        }
+        else {
+            //remove the key from the backward map
+            ArrayList<String> definitions = forward.get(key);
 
-        //for V is definition, split into words
-        String[] words = value.toString().split(" ");
+            for(String definition: definitions) {
+                var words = splitIntoWords(definition);
 
-        //Currently unused because of full text search
-//        //for all words, remove special characters and put into forward
-//        //this is for searching by definition
+                for(String word: words) {
+                    var keyword = backward.get(word);
+
+                    if(keyword != null) {
+                        keyword.removeIf(k -> k.compareTo(key) == 0);
+                    }
+                }
+
+            }
+
+            forward.put(key, new ArrayList<String>(List.of(value)));
+        }
+
+        final ArrayList<String> array = forward.get(key);
+
+        //Split into words
+        var words = splitIntoWords(value);
+
         for (String word : words) {
-            String wordNoSpecial = word.replaceAll("[^a-zA-Z0-9]", "");
+            backward.putIfAbsent(word, new ArrayList<>());
 
-            //Initialize the key on the first put
-            backward.putIfAbsent(wordNoSpecial, new ArrayList<>());
-
-            final var arr = backward.get(wordNoSpecial);
+            final var arr = backward.get(word);
 
             arr.add(key);
         }
-
-    }
-
-    public void overridingPut(String key, String value) {
-        forward.put(key, new ArrayList<>());
-        final var array = forward.get(key);
-
-        array.add(value);
-
-        String[] words = value.toString().split(" ");
-
-        //currently unused because of full text search
-//        for (String word : words) {
-//            String wordNoSpecial = word.replaceAll("[^a-zA-Z0-9]", "");
-//
-//            backward.put(wordNoSpecial, new ArrayList<>());
-//            final var arr = backward.get(wordNoSpecial);
-//
-//            arr.add(key);
-//        }
     }
 
     public ArrayList<String> getDefinition(String slangWord) {
@@ -65,21 +78,31 @@ public class TwoWaySlangHashMap {
     }
 
     public ArrayList<String> searchByDefinition(String definitionKey) {
-        var arr = new ArrayList<String>();
+        // split definitionKey into words
+        var words = splitIntoWords(definitionKey);
 
-        forward.values().forEach(array -> {
-            int index = 0;
-            for (String value : array) {
-                if (value.contains(definitionKey)) {
-                    arr.add(forward.keySet().toArray()[index].toString());
-                    break;
-                }
+        // initialize the arrayList
+        ArrayList<String> arr = new ArrayList<>();
+
+        // iterate through the words, intersecting the results
+        for (String word : words) {
+            ArrayList<String> tmpArr = backward.get(word);
+
+            //intersect the results
+            if(arr.size() == 0) {
+                arr = tmpArr;
+                continue;
             }
-
-            index++;
-        });
+            arr.retainAll(tmpArr);
+        }
 
         return arr;
+    }
+
+    static ArrayList<String> splitIntoWords(String str) {
+        String[] words = str.replaceAll("[^a-zA-Z0-9]", " ").split(" ");
+
+        return new ArrayList<>(Arrays.asList(words));
     }
 
     public ArrayList<String> searchBySlang(String slangWord) {
@@ -92,5 +115,9 @@ public class TwoWaySlangHashMap {
         });
 
         return arr;
+    }
+
+    public HashMap<String, ArrayList<String>> getForward() {
+        return forward;
     }
 }

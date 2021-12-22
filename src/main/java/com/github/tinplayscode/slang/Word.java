@@ -1,19 +1,21 @@
 package com.github.tinplayscode.slang;
 
+import javafx.beans.property.SimpleStringProperty;
+
 public class Word {
-    String word;
-    String definition;
+    SimpleStringProperty word;
+    SimpleStringProperty definition;
 
     public Word(String word, String definition) {
-        this.word = word;
-        this.definition = definition;
+        this.word = new SimpleStringProperty(word);
+        this.definition = new SimpleStringProperty(definition);
     }
 
     public String getWord() {
-        return word;
+        return word.get();
     }
 
     public String getDefinition() {
-        return definition;
+        return definition.get();
     }
 }
