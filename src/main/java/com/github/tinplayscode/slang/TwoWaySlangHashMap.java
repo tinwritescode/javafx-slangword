@@ -1,19 +1,17 @@
 package com.github.tinplayscode.slang;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
+import java.lang.reflect.Array;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class TwoWaySlangHashMap {
     //forward: slang -> definitions
     //backward: each word in definitions -> slang (s)
-    private final HashMap<String, ArrayList<String>> forward;
-    private final HashMap<String, ArrayList<String>> backward;
+    private final Map<String, ArrayList<String>> forward = new ConcurrentHashMap<>();
+    private final Map<String, ArrayList<String>> backward = new ConcurrentHashMap<>();
+    private final Trie trie = new Trie();
 
     public TwoWaySlangHashMap() {
-        forward = new HashMap<String, ArrayList<String>>();
-        backward = new HashMap<>();
     }
 
     /**
@@ -35,8 +33,12 @@ public class TwoWaySlangHashMap {
         //Initialize the key on the first put
         forward.putIfAbsent(key, new ArrayList<String>());
 
+        //add to trie
+        trie.add(key);
+
         //Add to array
         if(isDuplicate) {
+            forward.putIfAbsent(key, new ArrayList<String>());
             forward.get(key).add(value);
         }
         else {
@@ -105,19 +107,18 @@ public class TwoWaySlangHashMap {
         return new ArrayList<>(Arrays.asList(words));
     }
 
-    public ArrayList<String> searchBySlang(String slangWord) {
-        var arr = new ArrayList<String>();
+    //TODO: WRITE remove function
 
-        forward.keySet().forEach(key -> {
-            if (key.contains(slangWord)) {
-                arr.add(key);
-            }
-        });
-
-        return arr;
+    /**
+     * Return slang words that match the definition
+     * @param prefix prefix
+     * @return slang words
+     */
+    public ArrayList<String> searchBySlang(String prefix) {
+        return trie.findByPrefix(prefix);
     }
 
-    public HashMap<String, ArrayList<String>> getForward() {
-        return forward;
+    public ConcurrentHashMap<String, ArrayList<String>> getForward() {
+        return (ConcurrentHashMap<String, ArrayList<String>>) forward;
     }
 }

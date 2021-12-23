@@ -11,6 +11,12 @@ public class TestHashMap {
 //        System.out.println(map.getSlang("hi"));
 //        System.out.println(map.getSlang("John"));
 
-        System.out.println(map.searchByDefinition("my is howdy"));
+        map.put("HE", "hello");
+        map.put("HES", "hey");
+        map.put("HEY", "hi");
+        map.put("HELLO", "hi");
+
+//        System.out.println(map.searchByDefinition("my is howdy"));
+        System.out.println(map.searchBySlang("HE"));
     }
 }

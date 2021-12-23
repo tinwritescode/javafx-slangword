@@ -1,6 +1,7 @@
 package com.github.tinplayscode.slang;
 
 import javafx.application.Platform;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -8,49 +9,49 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.Optional;
 
 public class SlangController {
 
-    @FXML
-    public TableColumn<Word, String> keywordTColumn;
-
-    @FXML
-    public TableColumn<Word, String> definitionTColumn;
-
-    @FXML
-    private TextField wordInput;
-
-    @FXML
-    private TextArea definitionInput;
-
-    @FXML
-    private Button addButton;
-
-    @FXML
-    private TextField searchInput;
-
-    @FXML
-    private Button searchButton;
-
-    @FXML
-    private ChoiceBox<String> searchOption;
-
-    @FXML
-    private TableView<Word> discoverTable;
-
+    final String FILE_PATH = "slang.txt";
+    final String HISTORY_FILE_PATH = "history.dat";
     //discoverData
     private final ObservableList<Word> discoverData = FXCollections.observableArrayList();
-
+    private ObservableList<HistoryItem> historyData = FXCollections.observableArrayList();
+    @FXML
+    public TableColumn<Word, String> keywordTColumn;
+    @FXML
+    public TableColumn<Word, String> definitionTColumn;
+    @FXML
+    public TableColumn<HistoryItem, String> timeTColumn;
+    @FXML
+    public TableColumn<HistoryItem, String> textTColumn;
+    @FXML
+    private TextField wordInput;
+    @FXML
+    private TextArea definitionInput;
+    @FXML
+    private Button addButton;
+    @FXML
+    private TextField searchInput;
+    @FXML
+    private Button searchButton;
+    @FXML
+    private ChoiceBox<String> searchOption;
+    @FXML
+    private TableView<Word> discoverTable;
     @FXML
     private TableView<HistoryItem> historyTable;
-    private final ObservableList<HistoryItem> historyData = FXCollections.observableArrayList();
-
     // Variables
     private TwoWaySlangHashMap hashMap;
-    final String FILE_PATH = "slang.txt";
-    final String HISTORY_FILE_PATH = "history.txt";
 
     @FXML
     public void initialize() {
@@ -67,11 +68,22 @@ public class SlangController {
         searchButton.setOnAction(this::onSearchButtonClick);
 
         //set discovered table columns
-        keywordTColumn.setCellValueFactory(new PropertyValueFactory<Word, String>("word"));
-        definitionTColumn.setCellValueFactory(new PropertyValueFactory<Word, String>("definition"));
+        keywordTColumn.setCellValueFactory(new PropertyValueFactory<>("word"));
+        definitionTColumn.setCellValueFactory(new PropertyValueFactory<>("definition"));
 
         discoverTable.setEditable(true);
         discoverTable.setItems(discoverData);
+
+        // set history table columns
+        textTColumn.setCellValueFactory(historyItemStringCellDataFeatures -> new SimpleStringProperty(historyItemStringCellDataFeatures.getValue().getCommand() + ": " +
+                historyItemStringCellDataFeatures.getValue().getKeyword() + "\nKết quả: " +
+                historyItemStringCellDataFeatures.getValue().getResult()));
+        timeTColumn.setCellValueFactory(new PropertyValueFactory<>("time"));
+
+        historyTable.setEditable(false);
+        historyTable.setItems(historyData);
+
+        loadHistory();
     }
 
     private void onSearchButtonClick(ActionEvent actionEvent) {
@@ -84,12 +96,16 @@ public class SlangController {
         //get option
         String option = searchOption.getValue();
 
-        //search
-        if(option.equals("Search by Word")) {
-            //search by word
-            ArrayList<String> definitions = hashMap.getDefinition(keyword);
+        String command;
+        String result;
 
-            if (definitions == null) {
+        //search
+        if (option.equals("Search by Word")) {
+
+            //search by word
+            ArrayList<String> slangWords = hashMap.searchBySlang(keyword);
+
+            if (slangWords == null) {
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.setTitle("Thông báo");
                 alert.setHeaderText(null);
@@ -99,15 +115,29 @@ public class SlangController {
                 return;
             }
             //if found
-            for(String definition : definitions) {
-                discoverData.add(new Word(keyword, definition));
+            for (String word : slangWords) {
+                var definitions = hashMap.getDefinition(word);
+                for (String definition : definitions) {
+                    discoverData.add(new Word(word, definition));
+                }
             }
+
+            command = "Tìm kiếm theo từ";
+
+            //find any words in slangwords equal to keyword
+            if(slangWords.contains(keyword)){
+                result = "Thành công" + "\n" + "Số kết quả: " + slangWords.size();
+            }
+            else {
+                result = "Thất bại" + "\n" + "Kết quả tương tự: " + slangWords.size();
+            }
+
         } else {
             //search by definition
             ArrayList<String> words = hashMap.searchByDefinition(keyword);
 
             //if found
-            if(words == null) {
+            if (words == null) {
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.setTitle("Thông báo");
                 alert.setHeaderText(null);
@@ -117,19 +147,39 @@ public class SlangController {
                 return;
             }
 
-            for(String word : words) {
+            for (String word : words) {
                 ArrayList<String> definitions = hashMap.getDefinition(word);
 
                 //if found
-                for(String definition : definitions) {
+                for (String definition : definitions) {
                     discoverData.add(new Word(word, definition));
                 }
             }
+
+            command = "Tìm kiếm theo nghĩa";
+            if(words.size() == 0){
+                result = "Không tìm thấy";
+            }
+            else {
+                result = "Thành công" + "\n" + "Số kết quả: " + words.size();
+            }
         }
+
+
+        //get time now
+        var time = LocalDateTime.now();
+
+        //convert time to readable format
+        var timeString = time.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"));
+
+        new Thread(() -> {
+            saveToHistory(new HistoryItem(command, timeString, keyword, result));
+        }).start();
+        new Thread(this::saveToFile).start();
     }
 
     private void loadDirectory() {
-        if(hashMap == null) {
+        if (hashMap == null) {
             hashMap = new TwoWaySlangHashMap();
         }
 
@@ -146,23 +196,23 @@ public class SlangController {
                 String finalLine = line;
 
                 Platform.runLater(() -> {
-                    new Thread(() -> {
+//                    new Thread(() -> {
                         //if no `
-                        if (!finalLine.contains("`")) {
-                            return;
-                        }
+                    if (!finalLine.contains("`")) {
+                        return;
+                    }
 
-                        //split line `
-                        var split = finalLine.split("`");
+                    //split line `
+                    var split = finalLine.split("`");
 
-                        //split |
-                        String[] meanings = split[1].split("\\| ");
+                    //split |
+                    String[] meanings = split[1].split("\\| ");
 
-                        //Duplicate put by default
-                        for (String meaning : meanings) {
-                            hashMap.put(split[0], meaning);
-                        }
-                    }).start();
+                    //Duplicate put by default
+                    for (String meaning : meanings) {
+                        hashMap.put(split[0], meaning);
+                    }
+//                    }).start();
                 });
             }
         } catch (Exception e) {
@@ -170,9 +220,41 @@ public class SlangController {
         }
     }
 
-    private void saveToHistory(String word, String definition) {
+    private void loadHistory() {
+        try {
+            //read file
+            var file = new java.io.File(HISTORY_FILE_PATH);
+            FileInputStream fileInputStream = new FileInputStream(file);
+            ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
+
+            historyData = (ObservableList<HistoryItem>) objectInputStream.readObject();
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    private void saveToHistory(HistoryItem item) {
         //add to history
-//        historyData.add(new HistoryItem());
+        historyData.add(item);
+
+        //save to file as binary serialization
+        FileOutputStream fileOutputStream;
+        ObjectOutputStream objectOutputStream;
+        try {
+            //create file
+            fileOutputStream = new FileOutputStream(HISTORY_FILE_PATH);
+            objectOutputStream = new ObjectOutputStream(fileOutputStream);
+
+            //write to file
+            objectOutputStream.writeObject(item);
+
+            //close file
+            objectOutputStream.close();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void onAddButtonClick(ActionEvent event) {
@@ -180,12 +262,41 @@ public class SlangController {
         String word = wordInput.getText();
         String definition = definitionInput.getText();
 
-        // add to slang dictionary
-        hashMap.put(word, definition);
+        if(word.length() == 0 || definition.length() == 0){
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Thông báo");
+            alert.setHeaderText(null);
+            alert.setContentText("Từ và nghĩa không được để trống");
+            alert.showAndWait();
+            return;
+        }
 
         //clear input fields
         wordInput.clear();
         definitionInput.clear();
+
+        if(hashMap.getDefinition(word) != null){
+            ButtonType duplicateButton = new ButtonType("Tạo bản sau", ButtonBar.ButtonData.OK_DONE);
+            ButtonType overrideButton = new ButtonType("Thay thế", ButtonBar.ButtonData.OK_DONE);
+
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION,
+                    "Từ " + word + " đã tồn tại, bạn có muốn Tạo bản sau (duplicate) hay Ghi đè (override)?",
+                    duplicateButton, overrideButton);
+
+            Optional<ButtonType> result = alert.showAndWait();
+
+            if (result.isPresent() && result.get() == duplicateButton) {
+                hashMap.put(word, definition);
+            }
+            else if (result.isPresent() && result.get() == overrideButton) {
+                hashMap.put(word, definition, false);
+            }
+            return;
+        }
+
+        // add to slang dictionary
+        hashMap.put(word, definition);
+
     }
 
     private void saveToFile() {
@@ -205,11 +316,5 @@ public class SlangController {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    @FXML
-    public void exitApplication(ActionEvent event) {
-        saveToFile();
-        System.exit(0);
     }
 }

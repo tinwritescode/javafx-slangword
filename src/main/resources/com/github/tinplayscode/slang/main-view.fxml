@@ -90,8 +90,8 @@
                <center>
                   <TableView fx:id="historyTable" editable="true" prefHeight="202.0" prefWidth="618.0" tableMenuButtonVisible="true">
                      <columns>
-                        <TableColumn prefWidth="75.0" text="Nội dung" />
-                        <TableColumn prefWidth="75.0" text="Thời gian" />
+                        <TableColumn prefWidth="75.0" text="Nội dung" fx:id="textTColumn" />
+                        <TableColumn prefWidth="75.0" text="Thời gian" fx:id="timeTColumn" />
                      </columns>
                      <BorderPane.margin>
                         <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
