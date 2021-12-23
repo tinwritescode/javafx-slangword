@@ -79,6 +79,11 @@ public class TwoWaySlangHashMap {
         return forward.get(slangWord);
     }
 
+    //get keyword
+    public String getKeywordByIndex(int index) {
+        return forward.keySet().toArray(new String[0])[index];
+    }
+
     public ArrayList<String> searchByDefinition(String definitionKey) {
         // split definitionKey into words
         var words = splitIntoWords(definitionKey);
@@ -120,5 +125,9 @@ public class TwoWaySlangHashMap {
 
     public ConcurrentHashMap<String, ArrayList<String>> getForward() {
         return (ConcurrentHashMap<String, ArrayList<String>>) forward;
+    }
+
+    public int getSize() {
+        return forward.size();
     }
 }

@@ -110,17 +110,21 @@
                <center>
                   <VBox alignment="CENTER" BorderPane.alignment="CENTER">
                      <children>
-                        <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="67.0" prefWidth="200.0" text="Đẹp trai">
+                        <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="67.0" prefWidth="200.0" text="Đẹp trai" fx:id="everydayWordLabel">
                            <font>
                               <Font size="45.0" />
                            </font>
                         </Label>
-                        <Label alignment="TOP_LEFT" contentDisplay="TOP" prefHeight="154.0" prefWidth="434.0" text="Dùng để khen một người đàn ông có vẻ đẹp ngoại hình, thường các mẹ hay khen các chàng trai bảnh bao." textOverrun="CLIP" wrapText="true" />
+                        <Label alignment="TOP_CENTER" contentDisplay="CENTER" prefHeight="154.0" fx:id="everydayDefinitonsLabel" prefWidth="434.0" text="Dùng để khen một người đàn ông có vẻ đẹp ngoại hình, thường các mẹ hay khen các chàng trai bảnh bao." textOverrun="CLIP" wrapText="true" />
                      </children>
                   </VBox>
                </center>
                <top>
-                  <Label alignment="CENTER" contentDisplay="TOP" prefHeight="36.0" prefWidth="434.0" text="Hôm nay là ngày 15/12/2021, từ lóng của ngày hôm nay là &quot;Đẹp trai&quot;" textOverrun="CLIP" wrapText="true" BorderPane.alignment="CENTER" />
+                  <Label alignment="CENTER" contentDisplay="TOP" prefHeight="120.9" prefWidth="434.0" fx:id="everydayWelcomeLabel" text="Hôm nay là ngày 15/12/2021, từ lóng của ngày hôm nay là &quot;Đẹp trai&quot;" textOverrun="CLIP" wrapText="true" BorderPane.alignment="CENTER">
+                          <font>
+                             <Font size="20.0" />
+                          </font>
+                  </Label>
                </top>
             </BorderPane>
          </content>

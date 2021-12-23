@@ -18,6 +18,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class SlangController {
 
@@ -25,6 +26,10 @@ public class SlangController {
     final String HISTORY_FILE_PATH = "history.dat";
     //discoverData
     private final ObservableList<Word> discoverData = FXCollections.observableArrayList();
+    @FXML
+    public Label everydayWordLabel;
+    public Label everydayDefinitonsLabel;
+    public Label everydayWelcomeLabel;
     private ObservableList<HistoryItem> historyData = FXCollections.observableArrayList();
     @FXML
     public TableColumn<Word, String> keywordTColumn;
@@ -83,7 +88,31 @@ public class SlangController {
         historyTable.setEditable(false);
         historyTable.setItems(historyData);
 
-        loadHistory();
+//        loadHistory();
+
+        //set today's word
+
+        Platform.runLater(this::setEverydayWord);
+    }
+
+    private void setEverydayWord() {
+        //get today day in year
+        var today = LocalDateTime.now();
+        var day = today.getDayOfYear();
+        var index = day % hashMap.getSize();
+
+        //get word
+        var word = hashMap.getKeywordByIndex(index);
+        var definitions= hashMap.getDefinition(word);
+
+        //set label by join word and definition
+        everydayWordLabel.setText(word);
+        var definitionsString = String.join("\n", definitions);
+        everydayDefinitonsLabel.setText(definitionsString);
+
+        everydayWelcomeLabel.setText("Hôm nay là ngày " +
+                today.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) +
+                ", từ lóng của ngày hôm nay là " + word);
     }
 
     private void onSearchButtonClick(ActionEvent actionEvent) {
@@ -227,7 +256,9 @@ public class SlangController {
             FileInputStream fileInputStream = new FileInputStream(file);
             ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
 
-            historyData = (ObservableList<HistoryItem>) objectInputStream.readObject();
+            final ArrayList<HistoryItem> arr = (ArrayList<HistoryItem>) objectInputStream.readObject();
+
+            historyData = FXCollections.observableArrayList(arr);
         }
         catch (Exception e){
             e.printStackTrace();
@@ -239,22 +270,19 @@ public class SlangController {
         historyData.add(item);
 
         //save to file as binary serialization
-        FileOutputStream fileOutputStream;
-        ObjectOutputStream objectOutputStream;
-        try {
-            //create file
-            fileOutputStream = new FileOutputStream(HISTORY_FILE_PATH);
-            objectOutputStream = new ObjectOutputStream(fileOutputStream);
-
-            //write to file
-            objectOutputStream.writeObject(item);
-
-            //close file
-            objectOutputStream.close();
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
+//        FileOutputStream fileOutputStream;
+//        ObjectOutputStream objectOutputStream;
+//        try {
+//            //create file
+//            fileOutputStream = new FileOutputStream(HISTORY_FILE_PATH);
+//            objectOutputStream = new ObjectOutputStream(fileOutputStream);
+//
+//            //write to file as ArrayList<HistoryItem>
+//            objectOutputStream.writeObject(new ArrayList<>(historyData));
+//        }
+//        catch (Exception e) {
+//            e.printStackTrace();
+//        }
     }
 
     public void onAddButtonClick(ActionEvent event) {
@@ -308,7 +336,11 @@ public class SlangController {
 
             //write to file
             for (Map.Entry<String, ArrayList<String>> entry : hashMap.getForward().entrySet()) {
-                bufferedWriter.write(entry.getKey() + "`" + entry.getValue() + "\n");
+
+                //value split by |
+                final String values = String.join("| ", entry.getValue());
+
+                bufferedWriter.write(entry.getKey() + "`" + values + "\n");
             }
 
             //close file
