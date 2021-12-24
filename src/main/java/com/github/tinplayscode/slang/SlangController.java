@@ -10,13 +10,10 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class SlangController {
 
@@ -133,14 +130,24 @@ public class SlangController {
         //on q1d click
         q1dBtn.setOnAction(this::onQ1dClick);
 
-//        //on q2a click
-//        q2aBtn.setOnAction(this::onQ2aClick);
-//        //on q2b click
-//        q2bBtn.setOnAction(this::onQ2bClick);
-//        //on q2c click
-//        q2cBtn.setOnAction(this::onQ2cClick);
-//        //on q2d click
-//        q2dBtn.setOnAction(this::onQ2dClick);
+        //on q2a click
+        q2aBtn.setOnAction(this::onQ2aClick);
+        //on q2b click
+        q2bBtn.setOnAction(this::onQ2bClick);
+        //on q2c click
+        q2cBtn.setOnAction(this::onQ2cClick);
+        //on q2d click
+        q2dBtn.setOnAction(this::onQ2dClick);
+
+        //on tab q1 exit
+        q1tab.setOnClosed(event -> {
+            globalTimer.cancel();
+            globalTimer.purge();
+        });
+        q2tab.setOnClosed(event -> {
+            globalTimer.cancel();
+            globalTimer.purge();
+        });
     }
 
     private void q1CheckButtonResult(Button button) {
@@ -151,6 +158,21 @@ public class SlangController {
             button.setStyle("-fx-background-color: #00ff00; -fx-text-fill: #FFFFFF;");
         } else {
             button.setStyle("-fx-background-color: #ff0000; -fx-text-fill: #FFFFFF;");
+
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Thông báo");
+            alert.setHeaderText("Bạn đã trả lời sai");
+            alert.setContentText("Bạn đã trả lời sai, điểm số: " + q2PointLabel.getText().split(" ")[1]);
+            ButtonType buttonTypeOne = new ButtonType("Chơi lại", ButtonBar.ButtonData.OK_DONE);
+            ButtonType cancel = new ButtonType("Trở về màn hình chính", ButtonBar.ButtonData.CANCEL_CLOSE);
+
+            alert.getButtonTypes().setAll(buttonTypeOne, cancel);
+            alert.showAndWait();
+
+            if (alert.getResult() == cancel) {
+                q2tab.getTabPane().getSelectionModel().select(0);
+                return;
+            }
         }
 
         //kill global timer
@@ -161,9 +183,7 @@ public class SlangController {
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
-                Platform.runLater(() -> {
-                    initializeQ1(false);
-                });
+                Platform.runLater(() -> initializeQ1(false));
             }
          }, 700);
     }
@@ -184,7 +204,63 @@ public class SlangController {
         q1CheckButtonResult(q1dBtn);
     }
 
+    private void q2CheckButtonResult(Button button) {
+        //kill global timer
+        globalTimer.cancel();
+        globalTimer.purge();
+
+        if (hashMap.getDefinition(button.getText()).contains(q2Label.getText())) {
+            var splits = q2PointLabel.getText().split(" ");
+
+            q2PointLabel.setText(splits[0] + " " + (Integer.parseInt(splits[1]) + 10));
+            button.setStyle("-fx-background-color: #00ff00; -fx-text-fill: #FFFFFF;");
+        } else {
+            button.setStyle("-fx-background-color: #ff0000; -fx-text-fill: #FFFFFF;");
+
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Thông báo");
+            alert.setHeaderText("Bạn đã trả lời sai");
+            alert.setContentText("Bạn đã trả lời sai, điểm số: " + q2PointLabel.getText().split(" ")[1]);
+            ButtonType buttonTypeOne = new ButtonType("Chơi lại", ButtonBar.ButtonData.OK_DONE);
+            ButtonType cancel = new ButtonType("Trở về màn hình chính", ButtonBar.ButtonData.CANCEL_CLOSE);
+
+            alert.getButtonTypes().setAll(buttonTypeOne, cancel);
+            alert.showAndWait();
+
+            if (alert.getResult() == cancel) {
+                q2tab.getTabPane().getSelectionModel().select(0);
+                return;
+            }
+        }
+
+        new Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+                Platform.runLater(() -> initializeQ2(false));
+            }
+        }, 700);
+    }
+
+    private void onQ2aClick(ActionEvent actionEvent) {
+        q2CheckButtonResult(q2aBtn);
+    }
+
+    private void onQ2bClick(ActionEvent actionEvent) {
+        q2CheckButtonResult(q2bBtn);
+    }
+
+    private void onQ2cClick(ActionEvent actionEvent) {
+        q2CheckButtonResult(q2cBtn);
+    }
+
+    private void onQ2dClick(ActionEvent actionEvent) {
+        q2CheckButtonResult(q2dBtn);
+    }
+
     private void initializeQ2() {
+        initializeQ2(true);
+    }
+    private void initializeQ2(boolean reset) {
         //set q2 label
 
         var resultWord = hashMap.getRandomWord();
@@ -199,13 +275,17 @@ public class SlangController {
             var randWord = hashMap.getRandomWord();
 
             button.setText(randWord);
+            //reset style
+            button.setStyle("");
         }
 
         //set result
         arr[result].setText(resultWord);
 
         //set q1 btn
-        q2PointLabel.setText("Điểm: 0");
+        if(reset) {
+            q2PointLabel.setText("Điểm: 0");
+        }
         q2TimeLabel.setText("10");
 
 
@@ -455,10 +535,8 @@ public class SlangController {
         //convert time to readable format
         var timeString = time.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"));
 
-        new Thread(() -> {
-            saveToHistory(new HistoryItem(command, timeString, keyword, result));
-        }).start();
-        new Thread(this::saveToFile).start();
+        new Thread(() -> saveToHistory(new HistoryItem(command, timeString, keyword, result))).start();
+//        new Thread(this::saveToFile).start();
     }
 
     private void loadDirectory() {
@@ -579,6 +657,7 @@ public class SlangController {
         // add to slang dictionary
         hashMap.put(word, definition);
 
+        new Thread(this::saveToFile).start();
     }
 
     private void saveToFile() {

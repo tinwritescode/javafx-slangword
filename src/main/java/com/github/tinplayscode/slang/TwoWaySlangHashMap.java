@@ -1,6 +1,5 @@
 package com.github.tinplayscode.slang;
 
-import java.lang.reflect.Array;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -31,14 +30,14 @@ public class TwoWaySlangHashMap {
      */
     public void put(String key, String value, boolean isDuplicate) {
         //Initialize the key on the first put
-        forward.putIfAbsent(key, new ArrayList<String>());
+        forward.putIfAbsent(key, new ArrayList<>());
 
         //add to trie
         trie.add(key);
 
         //Add to array
         if(isDuplicate) {
-            forward.putIfAbsent(key, new ArrayList<String>());
+            forward.putIfAbsent(key, new ArrayList<>());
             forward.get(key).add(value);
         }
         else {
@@ -58,10 +57,8 @@ public class TwoWaySlangHashMap {
 
             }
 
-            forward.put(key, new ArrayList<String>(List.of(value)));
+            forward.put(key, new ArrayList<>(List.of(value)));
         }
-
-        final ArrayList<String> array = forward.get(key);
 
         //Split into words
         var words = splitIntoWords(value);
@@ -107,7 +104,7 @@ public class TwoWaySlangHashMap {
     }
 
     static ArrayList<String> splitIntoWords(String str) {
-        String[] words = str.replaceAll("[^a-zA-Z0-9]", " ").split(" ");
+        String[] words = str.replaceAll("[^a-zA-Z0-9']", " ").split(" ");
 
         return new ArrayList<>(Arrays.asList(words));
     }
