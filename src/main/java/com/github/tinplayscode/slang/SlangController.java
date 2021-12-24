@@ -15,9 +15,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class SlangController {
@@ -30,6 +28,23 @@ public class SlangController {
     public Label everydayWordLabel;
     public Label everydayDefinitonsLabel;
     public Label everydayWelcomeLabel;
+    public Button q2cBtn;
+    public Button q2dBtn;
+    public Button q2bBtn;
+    public Button q2aBtn;
+    public Button q1cBtn;
+    public Button q1dBtn;
+    public Button q1bBtn;
+    public Button q1aBtn;
+    public Tab q1tab;
+    public Tab q2tab;
+    public Label q2PointLabel;
+    public Label q2TimeLabel;
+    public Label q1Label;
+    public Label q1TimeLabel;
+    public Label q1PointLabel;
+    public Label q2Label;
+
     private ObservableList<HistoryItem> historyData = FXCollections.observableArrayList();
     @FXML
     public TableColumn<Word, String> keywordTColumn;
@@ -57,6 +72,7 @@ public class SlangController {
     private TableView<HistoryItem> historyTable;
     // Variables
     private TwoWaySlangHashMap hashMap;
+    private Timer globalTimer;
 
     @FXML
     public void initialize() {
@@ -93,6 +109,244 @@ public class SlangController {
         //set today's word
 
         Platform.runLater(this::setEverydayWord);
+
+        //on q1tab click
+        q1tab.setOnSelectionChanged(event -> {
+            if (q1tab.isSelected()) {
+                Platform.runLater(this::initializeQ1);
+            }
+        });
+
+        //on q2tab click
+        q2tab.setOnSelectionChanged(event -> {
+            if (q2tab.isSelected()) {
+                Platform.runLater(this::initializeQ2);
+            }
+        });
+
+        //on q1a click
+        q1aBtn.setOnAction(this::onQ1aClick);
+        //on q1b click
+        q1bBtn.setOnAction(this::onQ1bClick);
+        //on q1c click
+        q1cBtn.setOnAction(this::onQ1cClick);
+        //on q1d click
+        q1dBtn.setOnAction(this::onQ1dClick);
+
+//        //on q2a click
+//        q2aBtn.setOnAction(this::onQ2aClick);
+//        //on q2b click
+//        q2bBtn.setOnAction(this::onQ2bClick);
+//        //on q2c click
+//        q2cBtn.setOnAction(this::onQ2cClick);
+//        //on q2d click
+//        q2dBtn.setOnAction(this::onQ2dClick);
+    }
+
+    private void q1CheckButtonResult(Button button) {
+        if (hashMap.getDefinition(q1Label.getText()).contains(button.getText())) {
+            var splits = q1PointLabel.getText().split(" ");
+
+            q1PointLabel.setText(splits[0] + " " + (Integer.parseInt(splits[1]) + 10));
+            button.setStyle("-fx-background-color: #00ff00; -fx-text-fill: #FFFFFF;");
+        } else {
+            button.setStyle("-fx-background-color: #ff0000; -fx-text-fill: #FFFFFF;");
+        }
+
+        //kill global timer
+        globalTimer.cancel();
+        globalTimer.purge();
+
+        //run after 2 seconds
+        new Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+                Platform.runLater(() -> {
+                    initializeQ1(false);
+                });
+            }
+         }, 700);
+    }
+
+    private void onQ1aClick(ActionEvent actionEvent) {
+        q1CheckButtonResult(q1aBtn);
+    }
+
+    private void onQ1bClick(ActionEvent actionEvent) {
+        q1CheckButtonResult(q1bBtn);
+    }
+
+    private void onQ1cClick(ActionEvent actionEvent) {
+        q1CheckButtonResult(q1cBtn);
+    }
+
+    private void onQ1dClick(ActionEvent actionEvent) {
+        q1CheckButtonResult(q1dBtn);
+    }
+
+    private void initializeQ2() {
+        //set q2 label
+
+        var resultWord = hashMap.getRandomWord();
+        q2Label.setText(hashMap.getDefinition(resultWord).get(new Random().nextInt(hashMap.getDefinition(resultWord).size())));
+
+        final var result = new Random().nextInt(4);
+
+        //get random answer from array
+        var arr = new Button[]{q2aBtn, q2bBtn, q2cBtn, q2dBtn};
+        //loop through array and set text
+        for(var button: arr) {
+            var randWord = hashMap.getRandomWord();
+
+            button.setText(randWord);
+        }
+
+        //set result
+        arr[result].setText(resultWord);
+
+        //set q1 btn
+        q2PointLabel.setText("Điểm: 0");
+        q2TimeLabel.setText("10");
+
+
+        //kill global timer if it exists
+        if (globalTimer != null) {
+            globalTimer.cancel();
+            globalTimer.purge();
+        }
+
+        //set q1 time
+        globalTimer = new Timer();
+
+        final var timerTask = new TimerTask() {
+            @Override
+            public void run() {
+                Platform.runLater(() -> {
+                    var time = Integer.parseInt(q2TimeLabel.getText()) - 1;
+
+                    q2TimeLabel.setText(String.valueOf(Math.max(time, 0)));
+
+                    if(time == 0) {
+                        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                        alert.setTitle("Thông báo");
+                        alert.setHeaderText("Bạn đã hết thời gian");
+                        alert.setContentText("Bạn đã hết thời gian để cho trò chơi");
+                        //set button, chơi lại, quay lại
+                        ButtonType buttonTypeOne = new ButtonType("Chơi lại", ButtonBar.ButtonData.OK_DONE);
+                        ButtonType buttonTypeTwo = new ButtonType("Trở về");
+                        ButtonType buttonTypeCancel = new ButtonType("Về màn hình chính", ButtonBar.ButtonData.CANCEL_CLOSE);
+                        alert.getButtonTypes().setAll(buttonTypeOne, buttonTypeTwo, buttonTypeCancel);
+                        //set action
+                        Optional<ButtonType> result = alert.showAndWait();
+
+                        //check result
+                        if (result.isPresent() && result.get() == buttonTypeOne) {
+                            //run after 2 seconds
+                            new Timer().schedule(new TimerTask() {
+                                @Override
+                                public void run() {
+                                    Platform.runLater(SlangController.this::initializeQ2);
+                                }
+                            }, 1000);
+                        }
+                        else if (result.isPresent() && result.get() == buttonTypeCancel) {
+                            //back to main screen
+                            q1tab.getTabPane().getSelectionModel().select(0);
+                        }
+
+                        globalTimer.cancel();
+                        globalTimer.purge();
+                    }
+                });
+            }
+        };
+
+        globalTimer.scheduleAtFixedRate(timerTask, 0, 1000);
+    }
+
+    private void initializeQ1() {
+        initializeQ1(true);
+    }
+
+    private void initializeQ1(boolean reset) {
+        //set q1 label
+        q1Label.setText(hashMap.getRandomWord());
+
+        final var result = new Random().nextInt(4);
+
+        //get random answer from array
+        var arr = new Button[]{q1aBtn, q1bBtn, q1cBtn, q1dBtn};
+        //loop through array and set text
+        for(var button: arr) {
+            var randWord = hashMap.getRandomWord();
+            var definitions = hashMap.getDefinition(randWord);
+            var randDefinition = definitions.get(new Random().nextInt(definitions.size()));
+
+            button.setText(randDefinition);
+
+            //reset style
+            button.setStyle("");
+        }
+
+        var resultDefinitions = hashMap.getDefinition(q1Label.getText());
+
+        arr[result].setText(resultDefinitions.get(new Random().nextInt(resultDefinitions.size())));
+
+        if(reset) {
+            //set q1 btn
+            q1PointLabel.setText("Điểm: 0");
+        }
+
+        q1TimeLabel.setText("10");
+
+        //kill global timer if it exists
+        if (globalTimer != null) {
+            globalTimer.cancel();
+            globalTimer.purge();
+        }
+
+        //set q1 time
+        globalTimer = new Timer();
+
+        final var timerTask = new TimerTask() {
+            @Override
+            public void run() {
+                Platform.runLater(() -> {
+                    var time = Integer.parseInt(q1TimeLabel.getText()) - 1;
+
+                    q1TimeLabel.setText(String.valueOf(Math.max(time, 0)));
+
+                    if(time == 0) {
+                        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                        alert.setTitle("Thông báo");
+                        alert.setHeaderText("Bạn đã hết thời gian");
+                        alert.setContentText("Bạn đã hết thời gian để cho trò chơi");
+                        //set button, chơi lại, quay lại
+                        ButtonType buttonTypeOne = new ButtonType("Chơi lại", ButtonBar.ButtonData.OK_DONE);
+                        ButtonType buttonTypeTwo = new ButtonType("Trở về");
+                        ButtonType buttonTypeCancel = new ButtonType("Về màn hình chính", ButtonBar.ButtonData.CANCEL_CLOSE);
+                        alert.getButtonTypes().setAll(buttonTypeOne, buttonTypeTwo, buttonTypeCancel);
+                        //set action
+                        Optional<ButtonType> result = alert.showAndWait();
+
+                        //check result
+                        if (result.isPresent() && result.get() == buttonTypeOne) {
+                            //play again
+                            initializeQ1();
+                        }
+                        else if (result.isPresent() && result.get() == buttonTypeCancel) {
+                            //back to main screen
+                            q1tab.getTabPane().getSelectionModel().select(0);
+                        }
+
+                        globalTimer.cancel();
+                        globalTimer.purge();
+                    }
+                });
+            }
+        };
+
+        globalTimer.scheduleAtFixedRate(timerTask, 0, 1000);
     }
 
     private void setEverydayWord() {

@@ -130,4 +130,8 @@ public class TwoWaySlangHashMap {
     public int getSize() {
         return forward.size();
     }
+
+    public String getRandomWord() {
+        return forward.keySet().toArray(new String[0])[new Random().nextInt(forward.size())];
+    }
 }

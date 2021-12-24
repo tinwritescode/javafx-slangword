@@ -11,15 +11,12 @@
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-
-<TabPane prefHeight="502.0" prefWidth="639.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.tinplayscode.slang.SlangController">
+<TabPane prefHeight="502.0" prefWidth="639.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.tinplayscode.slang.SlangController">
    <tabs>
       <Tab closable="false" text="Khám phá">
          <content>
@@ -70,8 +67,8 @@
                   </Label>
                   <TableView fx:id="discoverTable" editable="true" prefHeight="202.0" prefWidth="618.0" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
                     <columns>
-                      <TableColumn prefWidth="358.3999938964844" text="Từ khoá" fx:id="keywordTColumn" />
-                      <TableColumn prefWidth="303.20001220703125" text="Nghĩa" fx:id="definitionTColumn" />
+                      <TableColumn fx:id="keywordTColumn" prefWidth="358.3999938964844" text="Từ khoá" />
+                      <TableColumn fx:id="definitionTColumn" prefWidth="303.20001220703125" text="Nghĩa" />
                     </columns>
                      <columnResizePolicy>
                         <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
@@ -90,8 +87,8 @@
                <center>
                   <TableView fx:id="historyTable" editable="true" prefHeight="202.0" prefWidth="618.0" tableMenuButtonVisible="true">
                      <columns>
-                        <TableColumn prefWidth="75.0" text="Nội dung" fx:id="textTColumn" />
-                        <TableColumn prefWidth="75.0" text="Thời gian" fx:id="timeTColumn" />
+                        <TableColumn fx:id="textTColumn" prefWidth="75.0" text="Nội dung" />
+                        <TableColumn fx:id="timeTColumn" prefWidth="75.0" text="Thời gian" />
                      </columns>
                      <BorderPane.margin>
                         <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
@@ -110,17 +107,17 @@
                <center>
                   <VBox alignment="CENTER" BorderPane.alignment="CENTER">
                      <children>
-                        <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="67.0" prefWidth="200.0" text="Đẹp trai" fx:id="everydayWordLabel">
+                        <Label fx:id="everydayWordLabel" alignment="CENTER" contentDisplay="CENTER" prefHeight="67.0" prefWidth="200.0" text="Đẹp trai">
                            <font>
                               <Font size="45.0" />
                            </font>
                         </Label>
-                        <Label alignment="TOP_CENTER" contentDisplay="CENTER" prefHeight="154.0" fx:id="everydayDefinitonsLabel" prefWidth="434.0" text="Dùng để khen một người đàn ông có vẻ đẹp ngoại hình, thường các mẹ hay khen các chàng trai bảnh bao." textOverrun="CLIP" wrapText="true" />
+                        <Label fx:id="everydayDefinitonsLabel" alignment="TOP_CENTER" contentDisplay="CENTER" prefHeight="154.0" prefWidth="434.0" text="Dùng để khen một người đàn ông có vẻ đẹp ngoại hình, thường các mẹ hay khen các chàng trai bảnh bao." textOverrun="CLIP" wrapText="true" />
                      </children>
                   </VBox>
                </center>
                <top>
-                  <Label alignment="CENTER" contentDisplay="TOP" prefHeight="120.9" prefWidth="434.0" fx:id="everydayWelcomeLabel" text="Hôm nay là ngày 15/12/2021, từ lóng của ngày hôm nay là &quot;Đẹp trai&quot;" textOverrun="CLIP" wrapText="true" BorderPane.alignment="CENTER">
+                  <Label fx:id="everydayWelcomeLabel" alignment="CENTER" contentDisplay="TOP" prefHeight="120.9" prefWidth="434.0" text="Hôm nay là ngày 15/12/2021, từ lóng của ngày hôm nay là &quot;Đẹp trai&quot;" textOverrun="CLIP" wrapText="true" BorderPane.alignment="CENTER">
                           <font>
                              <Font size="20.0" />
                           </font>
@@ -129,50 +126,110 @@
             </BorderPane>
          </content>
       </Tab>
-      <Tab closable="false" text="Nhìn từ đoán nghĩa">
+      <Tab fx:id="q1tab" closable="false" text="Nhìn từ đoán nghĩa">
          <content>
             <BorderPane>
                <center>
-                  <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="67.0" prefWidth="200.0" text="Đẹp trai" BorderPane.alignment="CENTER">
+                  <Label fx:id="q1Label" alignment="CENTER" contentDisplay="CENTER" prefHeight="67.0" prefWidth="200.0" text="Đẹp trai" BorderPane.alignment="CENTER">
                      <font>
                         <Font size="45.0" />
                      </font>
                   </Label>
                </center>
                <bottom>
-                  <GridPane hgap="8.0" prefHeight="262.0" prefWidth="639.0" vgap="8.0">
-                     <columnConstraints>
-                        <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" maxWidth="330.4000122070313" minWidth="10.0" prefWidth="301.60002441406255" />
-                        <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" maxWidth="340.79997558593755" minWidth="10.0" prefWidth="320.79997558593755" />
-                     </columnConstraints>
-                     <rowConstraints>
-                        <RowConstraints maxHeight="124.80001220703124" minHeight="10.0" prefHeight="92.80001220703124" valignment="CENTER" vgrow="ALWAYS" />
-                        <RowConstraints maxHeight="115.19998779296876" minHeight="10.0" prefHeight="115.19998779296876" valignment="CENTER" vgrow="ALWAYS" />
-                     </rowConstraints>
+                  <VBox>
                      <children>
-                        <Button mnemonicParsing="false" prefHeight="126.0" prefWidth="396.0" text="Từ dùng để chỉ một người Nam đẹp trai" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS" />
-                        <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="126.0" prefWidth="348.0" text="Từ dùng để chửi cuộc đời sau bắt con chạy deadline muốn khóc ra 10 thứ tiếng." wrapText="true" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS" />
-                        <Button mnemonicParsing="false" prefHeight="115.0" prefWidth="691.0" text="Button" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" GridPane.valignment="CENTER" />
-                        <Button mnemonicParsing="false" prefHeight="115.0" prefWidth="643.0" text="Button" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS" />
+                        <HBox>
+                           <children>
+                              <Button fx:id="q1aBtn" maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="126.0" prefWidth="396.0" text="Hic hic" HBox.hgrow="ALWAYS" />
+                              <Button fx:id="q1bBtn" maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="126.0" prefWidth="400.0" text="Bất lực" wrapText="true" HBox.hgrow="ALWAYS" />
+                           </children>
+                        </HBox>
+                        <HBox>
+                           <children>
+                              <Button fx:id="q1cBtn" maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="115.0" prefWidth="640.0" text="Đời mệt mỏi" HBox.hgrow="ALWAYS" />
+                              <Button fx:id="q1dBtn" maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="115.0" prefWidth="643.0" text="Cuộc đời đen tối" HBox.hgrow="ALWAYS" />
+                           </children>
+                        </HBox>
                      </children>
-                     <BorderPane.margin>
-                        <Insets bottom="10.0" />
-                     </BorderPane.margin>
-                     <padding>
-                        <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
-                     </padding>
-                  </GridPane>
+                  </VBox>
                </bottom>
+               <top>
+                  <BorderPane BorderPane.alignment="TOP_RIGHT">
+                     <top>
+                        <HBox BorderPane.alignment="CENTER" />
+                     </top>
+                     <left>
+                        <Label fx:id="q1PointLabel" text="Điểm: 20" BorderPane.alignment="CENTER">
+                           <font>
+                              <Font size="21.0" />
+                           </font>
+                        </Label>
+                     </left>
+                     <right>
+                        <FlowPane alignment="TOP_RIGHT" columnHalignment="RIGHT">
+                           <children>
+                              <Label text="Thời gian: ">
+                                 <font>
+                                    <Font size="21.0" />
+                                 </font>
+                              </Label>
+                              <Label fx:id="q1TimeLabel" layoutX="272.0" layoutY="10.0" text="20">
+                                 <font>
+                                    <Font size="21.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                        </FlowPane>
+                     </right>
+                     <BorderPane.margin>
+                        <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
+                     </BorderPane.margin>
+                  </BorderPane>
+               </top>
             </BorderPane>
          </content>
       </Tab>
-      <Tab closable="false" text="Nhìn nghĩa đoán từ">
+      <Tab fx:id="q2tab" closable="false" text="Nhìn nghĩa đoán từ">
          <content>
             <BorderPane>
+               <top>
+                  <BorderPane BorderPane.alignment="TOP_RIGHT">
+                     <top>
+                        <HBox BorderPane.alignment="CENTER" />
+                     </top>
+                     <left>
+                        <Label fx:id="q2PointLabel" text="Điểm: 20" BorderPane.alignment="CENTER">
+                           <font>
+                              <Font size="21.0" />
+                           </font>
+                        </Label>
+                     </left>
+                     <BorderPane.margin>
+                        <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
+                     </BorderPane.margin>
+                     <right>
+                        <FlowPane alignment="TOP_RIGHT" columnHalignment="RIGHT" BorderPane.alignment="CENTER">
+                           <children>
+                              <Label text="Thời gian: ">
+                                 <font>
+                                    <Font size="21.0" />
+                                 </font>
+                              </Label>
+                              <Label fx:id="q2TimeLabel" layoutX="272.0" layoutY="10.0" text="20">
+                                 <font>
+                                    <Font size="21.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                        </FlowPane>
+                     </right>
+                  </BorderPane>
+               </top>
                <center>
                   <BorderPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
                      <center>
-                        <Label alignment="CENTER" contentDisplay="TOP" prefHeight="182.0" prefWidth="634.0" text="Từ dùng để chửi cuộc đời sau bắt con chạy deadline muốn khóc ra 10 thứ tiếng." BorderPane.alignment="CENTER">
+                        <Label alignment="CENTER" contentDisplay="TOP" prefHeight="182.0" prefWidth="634.0" text="Từ dùng để chửi cuộc đời sau bắt con chạy deadline muốn khóc ra 10 thứ tiếng." BorderPane.alignment="CENTER" fx:id="q2Label">
                            <font>
                               <Font size="16.0" />
                            </font>
@@ -181,28 +238,22 @@
                   </BorderPane>
                </center>
                <bottom>
-                  <GridPane hgap="8.0" prefHeight="262.0" prefWidth="639.0" vgap="8.0" BorderPane.alignment="CENTER">
-                     <columnConstraints>
-                        <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" maxWidth="316.0" minWidth="10.0" prefWidth="308.79998779296875" />
-                        <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" maxWidth="351.20001220703125" minWidth="10.0" prefWidth="331.20001220703125" />
-                     </columnConstraints>
-                     <rowConstraints>
-                        <RowConstraints maxHeight="124.80001220703124" minHeight="10.0" prefHeight="92.80001220703124" vgrow="SOMETIMES" />
-                        <RowConstraints maxHeight="115.19998779296876" minHeight="10.0" prefHeight="115.19998779296876" vgrow="SOMETIMES" />
-                     </rowConstraints>
+                  <VBox BorderPane.alignment="CENTER">
                      <children>
-                        <Button mnemonicParsing="false" prefHeight="126.0" prefWidth="396.0" text="Hic hic" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS" />
-                        <Button mnemonicParsing="false" prefHeight="126.0" prefWidth="348.0" text="Bất lực" wrapText="true" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.valignment="CENTER" />
-                        <Button mnemonicParsing="false" prefHeight="115.0" prefWidth="691.0" text="Đời mệt mỏi" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" GridPane.valignment="CENTER" />
-                        <Button mnemonicParsing="false" prefHeight="115.0" prefWidth="643.0" text="Cuộc đời đen tối" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS" />
+                        <HBox>
+                           <children>
+                              <Button fx:id="q2aBtn" maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="126.0" prefWidth="396.0" text="Hic hic" HBox.hgrow="ALWAYS" />
+                              <Button fx:id="q2bBtn" maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="126.0" prefWidth="400.0" text="Bất lực" wrapText="true" HBox.hgrow="ALWAYS" />
+                           </children>
+                        </HBox>
+                        <HBox>
+                           <children>
+                              <Button fx:id="q2cBtn" maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="115.0" prefWidth="640.0" text="Đời mệt mỏi" HBox.hgrow="ALWAYS" />
+                              <Button fx:id="q2dBtn" maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="115.0" prefWidth="643.0" text="Cuộc đời đen tối" HBox.hgrow="ALWAYS" />
+                           </children>
+                        </HBox>
                      </children>
-                     <BorderPane.margin>
-                        <Insets bottom="10.0" />
-                     </BorderPane.margin>
-                     <padding>
-                        <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
-                     </padding>
-                  </GridPane>
+                  </VBox>
                </bottom>
             </BorderPane>
          </content>

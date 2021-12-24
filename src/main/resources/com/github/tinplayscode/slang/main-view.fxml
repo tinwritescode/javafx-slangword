@@ -11,6 +11,7 @@
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
@@ -125,11 +126,11 @@
             </BorderPane>
          </content>
       </Tab>
-      <Tab closable="false" text="Nhìn từ đoán nghĩa">
+      <Tab fx:id="q1tab" closable="false" text="Nhìn từ đoán nghĩa">
          <content>
             <BorderPane>
                <center>
-                  <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="67.0" prefWidth="200.0" text="Đẹp trai" BorderPane.alignment="CENTER">
+                  <Label fx:id="q1Label" alignment="CENTER" contentDisplay="CENTER" prefHeight="67.0" prefWidth="200.0" text="Đẹp trai" BorderPane.alignment="CENTER">
                      <font>
                         <Font size="45.0" />
                      </font>
@@ -140,29 +141,95 @@
                      <children>
                         <HBox>
                            <children>
-                              <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="126.0" prefWidth="396.0" text="Hic hic" HBox.hgrow="ALWAYS" />
-                              <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="126.0" prefWidth="400.0" text="Bất lực" wrapText="true" HBox.hgrow="ALWAYS" />
+                              <Button fx:id="q1aBtn" maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="126.0" prefWidth="396.0" text="Hic hic" HBox.hgrow="ALWAYS" />
+                              <Button fx:id="q1bBtn" maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="126.0" prefWidth="400.0" text="Bất lực" wrapText="true" HBox.hgrow="ALWAYS" />
                            </children>
                         </HBox>
                         <HBox>
                            <children>
-                              <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="115.0" prefWidth="640.0" text="Đời mệt mỏi" HBox.hgrow="ALWAYS" />
-                              <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="115.0" prefWidth="643.0" text="Cuộc đời đen tối" HBox.hgrow="ALWAYS" />
+                              <Button fx:id="q1cBtn" maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="115.0" prefWidth="640.0" text="Đời mệt mỏi" HBox.hgrow="ALWAYS" />
+                              <Button fx:id="q1dBtn" maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="115.0" prefWidth="643.0" text="Cuộc đời đen tối" HBox.hgrow="ALWAYS" />
                            </children>
                         </HBox>
                      </children>
                   </VBox>
                </bottom>
+               <top>
+                  <BorderPane BorderPane.alignment="TOP_RIGHT">
+                     <top>
+                        <HBox BorderPane.alignment="CENTER" />
+                     </top>
+                     <left>
+                        <Label fx:id="q1PointLabel" text="Điểm: 20" BorderPane.alignment="CENTER">
+                           <font>
+                              <Font size="21.0" />
+                           </font>
+                        </Label>
+                     </left>
+                     <right>
+                        <FlowPane alignment="TOP_RIGHT" columnHalignment="RIGHT">
+                           <children>
+                              <Label text="Thời gian: ">
+                                 <font>
+                                    <Font size="21.0" />
+                                 </font>
+                              </Label>
+                              <Label fx:id="q1TimeLabel" layoutX="272.0" layoutY="10.0" text="20">
+                                 <font>
+                                    <Font size="21.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                        </FlowPane>
+                     </right>
+                     <BorderPane.margin>
+                        <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
+                     </BorderPane.margin>
+                  </BorderPane>
+               </top>
             </BorderPane>
          </content>
       </Tab>
-      <Tab closable="false" text="Nhìn nghĩa đoán từ">
+      <Tab fx:id="q2tab" closable="false" text="Nhìn nghĩa đoán từ">
          <content>
             <BorderPane>
+               <top>
+                  <BorderPane BorderPane.alignment="TOP_RIGHT">
+                     <top>
+                        <HBox BorderPane.alignment="CENTER" />
+                     </top>
+                     <left>
+                        <Label fx:id="q2PointLabel" text="Điểm: 20" BorderPane.alignment="CENTER">
+                           <font>
+                              <Font size="21.0" />
+                           </font>
+                        </Label>
+                     </left>
+                     <BorderPane.margin>
+                        <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
+                     </BorderPane.margin>
+                     <right>
+                        <FlowPane alignment="TOP_RIGHT" columnHalignment="RIGHT" BorderPane.alignment="CENTER">
+                           <children>
+                              <Label text="Thời gian: ">
+                                 <font>
+                                    <Font size="21.0" />
+                                 </font>
+                              </Label>
+                              <Label fx:id="q2TimeLabel" layoutX="272.0" layoutY="10.0" text="20">
+                                 <font>
+                                    <Font size="21.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                        </FlowPane>
+                     </right>
+                  </BorderPane>
+               </top>
                <center>
                   <BorderPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
                      <center>
-                        <Label alignment="CENTER" contentDisplay="TOP" prefHeight="182.0" prefWidth="634.0" text="Từ dùng để chửi cuộc đời sau bắt con chạy deadline muốn khóc ra 10 thứ tiếng." BorderPane.alignment="CENTER">
+                        <Label alignment="CENTER" contentDisplay="TOP" prefHeight="182.0" prefWidth="634.0" text="Từ dùng để chửi cuộc đời sau bắt con chạy deadline muốn khóc ra 10 thứ tiếng." BorderPane.alignment="CENTER" fx:id="q2Label">
                            <font>
                               <Font size="16.0" />
                            </font>
@@ -175,14 +242,14 @@
                      <children>
                         <HBox>
                            <children>
-                              <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="126.0" prefWidth="396.0" text="Hic hic" HBox.hgrow="ALWAYS" />
-                              <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="126.0" prefWidth="400.0" text="Bất lực" wrapText="true" HBox.hgrow="ALWAYS" />
+                              <Button fx:id="q2aBtn" maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="126.0" prefWidth="396.0" text="Hic hic" HBox.hgrow="ALWAYS" />
+                              <Button fx:id="q2bBtn" maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="126.0" prefWidth="400.0" text="Bất lực" wrapText="true" HBox.hgrow="ALWAYS" />
                            </children>
                         </HBox>
                         <HBox>
                            <children>
-                              <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="115.0" prefWidth="640.0" text="Đời mệt mỏi" HBox.hgrow="ALWAYS" />
-                              <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="115.0" prefWidth="643.0" text="Cuộc đời đen tối" HBox.hgrow="ALWAYS" />
+                              <Button fx:id="q2cBtn" maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="115.0" prefWidth="640.0" text="Đời mệt mỏi" HBox.hgrow="ALWAYS" />
+                              <Button fx:id="q2dBtn" maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="115.0" prefWidth="643.0" text="Cuộc đời đen tối" HBox.hgrow="ALWAYS" />
                            </children>
                         </HBox>
                      </children>
