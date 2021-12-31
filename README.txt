@@ -1,5 +1,4 @@
 I. Các chức năng
-Các chức năng đã hoàn tất:
 1. Chức năng tìm kiếm theo slang word. 
 2. Chức năng tìm kiếm theo definition, hiển thị ra tất cả các slang words mà trong 
 defintion có chứa keyword gõ vào.
@@ -13,4 +12,6 @@ dùng, confirm có overwrite hay duplicate ra 1 slang word mới.
 9. Chức năng đố vui, chương trình hiển thị 1 random slang word, với 4 đáp án cho
 người dùng chọn.
 10. Chức năng đố vui, chương trình hiển thị 1 definition, với 4 slang words đáp án cho
-người dùng chọ
+người dùng chọn
+
+Tự đánh giá: 10/10

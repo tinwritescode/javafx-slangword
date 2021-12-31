@@ -9,6 +9,10 @@ public class TwoWaySlangHashMap {
     private final Map<String, ArrayList<String>> forward = new ConcurrentHashMap<>();
     private final Map<String, ArrayList<String>> backward = new ConcurrentHashMap<>();
     private final Trie trie = new Trie();
+    //AA
+    //AAB
+    //AABC
+    //AAAAC
 
     public TwoWaySlangHashMap() {
     }
@@ -97,7 +101,7 @@ public class TwoWaySlangHashMap {
                 arr = tmpArr;
                 continue;
             }
-            arr.retainAll(tmpArr);
+            if(tmpArr != null) arr.retainAll(tmpArr);
         }
 
         return arr;
@@ -183,6 +187,9 @@ public class TwoWaySlangHashMap {
 
         // remove old word from trie
         trie.remove(oldWord);
+
+        // add new word to trie
+        trie.add(newWord);
     }
 
     public void modifyDefinition(String word, String oldDef, String newDef) {

@@ -23,7 +23,8 @@ import java.util.*;
 
 public class SlangController {
 
-    final String FILE_PATH = "slang.txt";
+    final String SLANG_PATH = "slang.txt";
+    final String DEFAULT_SLANG_PATH = "slang-default.txt";
     final String HISTORY_FILE_PATH = "history.dat";
     //discoverData
     private final ObservableList<Word> discoverData = FXCollections.observableArrayList();
@@ -230,7 +231,7 @@ public class SlangController {
                 // ... user chose OK
                 try {
                     //override slang word file to slang-default.txt
-                    Files.copy(Paths.get("slang-default.txt"), Paths.get("slang-word.txt"), StandardCopyOption.REPLACE_EXISTING);
+                    Files.copy(Paths.get(DEFAULT_SLANG_PATH), Paths.get(SLANG_PATH), StandardCopyOption.REPLACE_EXISTING);
                 }
                 catch (IOException e) {
                     e.printStackTrace();
@@ -577,14 +578,14 @@ public class SlangController {
             //search by word
             ArrayList<String> slangWords = hashMap.searchBySlang(keyword);
 
-            if (slangWords == null) {
-                Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                alert.setTitle("Thông báo");
-                alert.setHeaderText(null);
-                alert.setContentText("Không tìm thấy từ khóa");
-                alert.showAndWait();
-
-                return;
+            if (slangWords == null || slangWords.size() == 0) {
+                Platform.runLater(() -> {
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("Thông báo");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Không tìm thấy từ khóa");
+                    alert.showAndWait();
+                });
             }
             //if found
             for (String word : slangWords) {
@@ -613,27 +614,29 @@ public class SlangController {
             ArrayList<String> words = hashMap.searchByDefinition(keyword);
 
             //if found
-            if (words == null) {
-                Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                alert.setTitle("Thông báo");
-                alert.setHeaderText(null);
-                alert.setContentText("Không tìm từ nào khớp với nghĩa");
-                alert.showAndWait();
-
-                return;
+            if (words == null || words.size() == 0) {
+                Platform.runLater(() -> {
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("Thông báo");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Không tìm từ nào khớp với nghĩa");
+                    alert.showAndWait();
+                });
             }
 
-            for (String word : words) {
-                ArrayList<String> definitions = hashMap.getDefinition(word);
+            if(words != null) {
+                for (String word : words) {
+                    ArrayList<String> definitions = hashMap.getDefinition(word);
 
-                //if found
-                for (String definition : definitions) {
-                    discoverData.add(new Word(word, definition));
+                    //if found
+                    for (String definition : definitions) {
+                        discoverData.add(new Word(word, definition));
+                    }
                 }
             }
 
             command = "Tìm kiếm theo nghĩa";
-            if(words.size() == 0){
+            if(words == null || words.size() == 0){
                 result = "Không tìm thấy";
             }
             else {
@@ -648,7 +651,7 @@ public class SlangController {
         //convert time to readable format
         var timeString = time.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"));
 
-        new Thread(() -> saveToHistory(new HistoryItem(command, timeString, keyword, result))).start();
+        saveToHistory(new HistoryItem(command, timeString, keyword, result));
 //        new Thread(this::saveToFile).start();
     }
 
@@ -660,7 +663,7 @@ public class SlangController {
         //load dictionary
         try {
             //read file
-            var file = new java.io.File(FILE_PATH);
+            var file = new java.io.File(SLANG_PATH);
             var fileReader = new java.io.FileReader(file);
             var bufferedReader = new java.io.BufferedReader(fileReader);
 
@@ -781,7 +784,7 @@ public class SlangController {
     private void saveToFile() {
         try {
             //write to file
-            var file = new java.io.File(FILE_PATH);
+            var file = new java.io.File(SLANG_PATH);
             var fileWriter = new java.io.FileWriter(file);
             var bufferedWriter = new java.io.BufferedWriter(fileWriter);
 
