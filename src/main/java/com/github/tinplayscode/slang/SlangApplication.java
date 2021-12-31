@@ -11,8 +11,8 @@ public class SlangApplication extends Application {
     @Override
     public void start(Stage stage) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(SlangApplication.class.getResource("main-view.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(), 320, 240);
-        stage.setTitle("Hello!");
+        Scene scene = new Scene(fxmlLoader.load(), 640, 480);
+        stage.setTitle("Slang Word | MSSV: 19127582 | Lớp: 19KTPM1");
         stage.setScene(scene);
         stage.show();
     }

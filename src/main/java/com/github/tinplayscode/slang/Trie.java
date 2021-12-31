@@ -20,7 +20,7 @@ public class Trie {
             }
             current = current.get(c);
         }
-        current.setEnd();
+        current.setEnd(false);
     }
 
     public boolean contains(String word) {
@@ -90,6 +90,18 @@ public class Trie {
         return words;
     }
 
+    public void remove(String word) {
+        Node current = root;
+        for (int i = 0; i < word.length(); i++) {
+            char c = word.charAt(i);
+            if (!current.contains(c)) {
+                return;
+            }
+            current = current.get(c);
+        }
+        current.setEnd(false);
+    }
+
     static class Node {
         private final String word;
         private final Map<Character, Node> children;
@@ -117,7 +129,7 @@ public class Trie {
             return children.get(c);
         }
 
-        public void setEnd() {
+        public void setEnd(boolean b) {
             isWord = true;
         }
 

@@ -8,9 +8,15 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.cell.TextFieldTableCell;
 
+import javax.security.auth.callback.Callback;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -41,6 +47,8 @@ public class SlangController {
     public Label q1TimeLabel;
     public Label q1PointLabel;
     public Label q2Label;
+    public TabPane tabPane;
+    public Button resetBtn;
 
     private ObservableList<HistoryItem> historyData = FXCollections.observableArrayList();
     @FXML
@@ -89,7 +97,68 @@ public class SlangController {
         keywordTColumn.setCellValueFactory(new PropertyValueFactory<>("word"));
         definitionTColumn.setCellValueFactory(new PropertyValueFactory<>("definition"));
 
+        //add a delete button to the table
+        TableColumn<Word, String> deleteColumn = new TableColumn<>("Delete");
+        //set a button to the delete column
+        deleteColumn.setCellFactory(col -> {
+            TableCell<Word, String> cell = new TableCell<>();
+            Button button = new Button("Delete");
+            button.setOnAction(event -> {
+                final var word = cell.getTableView().getItems().get(cell.getIndex());
+
+                //Show a confirmation dialog
+                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                alert.setTitle("Confirmation Dialog");
+                alert.setHeaderText("Delete this word?");
+                alert.setContentText("Are you sure you want to delete the word \"" +  word.getWord() + "\" (" + word.getDefinition() + ") ?");
+                Optional<ButtonType> result = alert.showAndWait();
+                if (result.get() == ButtonType.OK) {
+                    //delete the word
+                    hashMap.remove(word);
+                    discoverData.remove(word);
+
+                    new Thread(this::saveToFile).start();
+                }
+            });
+            cell.setGraphic(button);
+            return cell;
+        });
+        deleteColumn.setOnEditCommit(event -> {
+            Word word = event.getRowValue();
+            String newWord = event.getNewValue();
+            if (newWord != null && !newWord.isEmpty()) {
+                hashMap.remove(word.getWord());
+            }
+        });
+
         discoverTable.setEditable(true);
+
+        //set editable keywordTColumn and definitionTColumn
+        keywordTColumn.setCellFactory(TextFieldTableCell.forTableColumn());
+        keywordTColumn.setOnEditCommit(event -> {
+            var newValue = event.getNewValue();
+            var oldValue = event.getOldValue();
+            var item = event.getTableView().getItems().get(event.getTablePosition().getRow());
+
+            item.setWord(newValue);
+            hashMap.modifyWord(oldValue, newValue);
+
+            new Thread(this::saveToFile).start();
+        });
+
+        definitionTColumn.setCellFactory(TextFieldTableCell.forTableColumn());
+        definitionTColumn.setOnEditCommit(event -> {
+            var newValue = event.getNewValue();
+            var oldValue = event.getOldValue();
+            var item = event.getTableView().getItems().get(event.getTablePosition().getRow());
+
+            item.setDefinition(newValue);
+            hashMap.modifyDefinition(item.getWord(), oldValue, newValue);
+            new Thread(this::saveToFile).start();
+        });
+
+        //add a delete column to discovered table
+        discoverTable.getColumns().add(deleteColumn);
         discoverTable.setItems(discoverData);
 
         // set history table columns
@@ -100,6 +169,8 @@ public class SlangController {
 
         historyTable.setEditable(false);
         historyTable.setItems(historyData);
+
+
 
 //        loadHistory();
 
@@ -139,14 +210,40 @@ public class SlangController {
         //on q2d click
         q2dBtn.setOnAction(this::onQ2dClick);
 
-        //on tab q1 exit
-        q1tab.setOnClosed(event -> {
-            globalTimer.cancel();
-            globalTimer.purge();
+        //ob tab switching
+        tabPane.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            if(globalTimer != null) {
+                globalTimer.cancel();
+                globalTimer.purge();
+            }
         });
-        q2tab.setOnClosed(event -> {
-            globalTimer.cancel();
-            globalTimer.purge();
+
+        resetBtn.setOnAction(event -> {
+            //Alert user to confirm reset
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle("Xác nhận");
+            alert.setHeaderText("Bạn có chắc chắn muốn reset dữ liệu về slang word gốc?");
+            alert.setContentText("Dữ liệu được thêm mới sẽ mất vĩnh viễn!");
+
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result.get() == ButtonType.OK) {
+                // ... user chose OK
+                try {
+                    //override slang word file to slang-default.txt
+                    Files.copy(Paths.get("slang-default.txt"), Paths.get("slang-word.txt"), StandardCopyOption.REPLACE_EXISTING);
+                }
+                catch (IOException e) {
+                    e.printStackTrace();
+                }
+                //Alert that application should be restarted
+                Alert alert2 = new Alert(Alert.AlertType.INFORMATION);
+                alert2.setTitle("Thông báo");
+                alert2.setHeaderText("Vui lòng khởi động lại ứng dụng để có hiệu lực!");
+                alert2.showAndWait();
+
+                //close application
+                Platform.exit();
+            }
         });
     }
 
@@ -159,10 +256,16 @@ public class SlangController {
         } else {
             button.setStyle("-fx-background-color: #ff0000; -fx-text-fill: #FFFFFF;");
 
+            //kill global timer
+            if (globalTimer != null) {
+                globalTimer.cancel();
+                globalTimer.purge();
+            }
+
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Thông báo");
             alert.setHeaderText("Bạn đã trả lời sai");
-            alert.setContentText("Bạn đã trả lời sai, điểm số: " + q2PointLabel.getText().split(" ")[1]);
+            alert.setContentText("Bạn đã trả lời sai, điểm số: " + q1PointLabel.getText().split(" ")[1]);
             ButtonType buttonTypeOne = new ButtonType("Chơi lại", ButtonBar.ButtonData.OK_DONE);
             ButtonType cancel = new ButtonType("Trở về màn hình chính", ButtonBar.ButtonData.CANCEL_CLOSE);
 
@@ -216,6 +319,12 @@ public class SlangController {
             button.setStyle("-fx-background-color: #00ff00; -fx-text-fill: #FFFFFF;");
         } else {
             button.setStyle("-fx-background-color: #ff0000; -fx-text-fill: #FFFFFF;");
+
+            //kill global timer
+            if (globalTimer != null) {
+                globalTimer.cancel();
+                globalTimer.purge();
+            }
 
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Thông báo");
@@ -480,6 +589,10 @@ public class SlangController {
             //if found
             for (String word : slangWords) {
                 var definitions = hashMap.getDefinition(word);
+
+                if(definitions == null) {
+                    continue;
+                }
                 for (String definition : definitions) {
                     discoverData.add(new Word(word, definition));
                 }
@@ -557,26 +670,31 @@ public class SlangController {
                 String finalLine = line;
 
                 Platform.runLater(() -> {
-//                    new Thread(() -> {
-                        //if no `
-                    if (!finalLine.contains("`")) {
-                        return;
+                    try {
+                        if (!finalLine.contains("`")) {
+                            return;
+                        }
+
+                        //split line `
+                        var split = finalLine.split("`");
+
+                        //split |
+                        String[] meanings = split[1].split("\\| ");
+
+                        //Duplicate put by default
+                        for (String meaning : meanings) {
+                            hashMap.put(split[0], meaning);
+                        }
+                    }
+                    catch (Exception e){
+                        System.out.println("Error line: " + finalLine);
+//                        e.printStackTrace();
                     }
 
-                    //split line `
-                    var split = finalLine.split("`");
-
-                    //split |
-                    String[] meanings = split[1].split("\\| ");
-
-                    //Duplicate put by default
-                    for (String meaning : meanings) {
-                        hashMap.put(split[0], meaning);
-                    }
-//                    }).start();
                 });
             }
         } catch (Exception e) {
+
             e.printStackTrace();
         }
     }

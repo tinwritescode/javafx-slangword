@@ -131,4 +131,71 @@ public class TwoWaySlangHashMap {
     public String getRandomWord() {
         return forward.keySet().toArray(new String[0])[new Random().nextInt(forward.size())];
     }
+
+    public void remove(String word) {
+        trie.remove(word);
+
+        //NOTE: also remove from backward map, but we don't need to, it will be removed in the next program run
+        forward.remove(word);
+    }
+
+    public void remove(Word word) {
+        final var w = forward.get(word.getWord());
+
+        if(w != null) {
+            w.remove(word.getDefinition());
+        }
+
+        trie.remove(word.getWord());
+    }
+
+    public void modifyWord(String oldWord, String newWord) {
+        // change word to newWord
+        forward.putIfAbsent(newWord, new ArrayList<>());
+        forward.get(newWord).addAll(forward.get(oldWord));
+        forward.remove(oldWord);
+
+        // change word in backward map
+        ArrayList<String> definitions = forward.get(newWord);
+
+        for(String definition: definitions) {
+            var words = splitIntoWords(definition);
+
+            for(String word: words) {
+                var keyword = backward.get(word);
+
+                if(keyword != null) {
+                    keyword.removeIf(k -> k.compareTo(oldWord) == 0);
+                }
+            }
+
+        }
+
+        ArrayList<String> words = splitIntoWords(newWord);
+
+        for (String word : words) {
+            backward.putIfAbsent(word, new ArrayList<>());
+
+            final var arr = backward.get(word);
+
+            arr.add(newWord);
+        }
+
+        // remove old word from trie
+        trie.remove(oldWord);
+    }
+
+    public void modifyDefinition(String word, String oldDef, String newDef) {
+        // change definition to newValue
+        var defArr = forward.get(word);
+
+        if(defArr != null) {
+            defArr.removeIf(d -> d.compareTo(oldDef) == 0);
+
+            //add newDef if it doesn't exist
+            if(!defArr.contains(newDef)) {
+                defArr.add(newDef);
+            }
+        }
+    }
 }

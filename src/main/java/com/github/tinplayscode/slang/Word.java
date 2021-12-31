@@ -18,4 +18,12 @@ public class Word {
     public String getDefinition() {
         return definition.get();
     }
+
+    public void setWord(String newValue) {
+        word.set(newValue);
+    }
+
+    public void setDefinition(String newValue) {
+        definition.set(newValue);
+    }
 }
