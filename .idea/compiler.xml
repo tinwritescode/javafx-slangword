@@ -6,11 +6,11 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="slang" />
+        <module name="Dict_19127582" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="slang" target="17" />
+      <module name="Dict_19127582" target="17" />
     </bytecodeTargetLevel>
   </component>
 </project>

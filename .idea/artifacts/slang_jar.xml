@@ -2,7 +2,7 @@
   <artifact type="jar" name="slang:jar">
     <output-path>$PROJECT_DIR$/out/artifacts/slang_jar</output-path>
     <root id="archive" name="slang.jar">
-      <element id="module-output" name="slang" />
+      <element id="module-output" name="Dict_19127582" />
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/openjfx/javafx-fxml/17-ea+11/javafx-fxml-17-ea+11.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/openjfx/javafx-fxml/17-ea+11/javafx-fxml-17-ea+11-win.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/openjfx/javafx-base/17-ea+11/javafx-base-17-ea+11.jar" path-in-jar="/" />
